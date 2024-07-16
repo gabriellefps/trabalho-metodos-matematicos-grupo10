@@ -1,0 +1,68 @@
+import matplotlib.pyplot as plt
+import sympy as sp
+import numpy as np
+
+# Definindo o raio e o símbolo x
+raio = 36
+x = sp.Symbol('x')
+
+# Definindo a função f(x) = 36 * sqrt(x)
+fx = 36 * sp.sqrt(x)
+
+# Calculando as derivadas de f(x)
+aux1 = sp.diff(fx, x)
+aux2 = sp.diff(aux1, x)
+aux3 = sp.diff(aux2, x)
+aux4 = sp.diff(aux3, x)
+
+# Convertendo as expressões simbólicas em funções lambdify
+au1 = sp.lambdify(x, aux1, 'numpy')
+au2 = sp.lambdify(x, aux2, 'numpy')
+au3 = sp.lambdify(x, aux3, 'numpy')
+au4 = sp.lambdify(x, aux4, 'numpy')
+
+# Calculando as derivadas no ponto raio
+df1 = au1(raio)
+df2 = au2(raio)
+df3 = au3(raio)
+df4 = au4(raio)
+
+# Fatoriais
+f1 = sp.factorial(1)
+f2 = sp.factorial(2)
+f3 = sp.factorial(3)
+f4 = sp.factorial(4)
+
+# Definindo os polinômios de Taylor como funções lambda
+P1 = lambda x_val: fx.subs(x, raio) + ((df1/f1)*((x_val - raio)**1))
+P2 = lambda x_val: P1(x_val) + ((df2/f2)*((x_val - raio)**2))
+P3 = lambda x_val: P2(x_val) + ((df3/f3)*((x_val - raio)**3))
+P4 = lambda x_val: P3(x_val) + ((df4/f4)*((x_val - raio)**4))
+
+
+# Intervalo de x para o gráfico
+x_vals = np.linspace(0, 72, 400)
+
+# Avaliando as funções nos valores de x
+y_f = np.array([fx.subs(x, xv) for xv in x_vals])
+y_P1 = np.array([P1(xv) for xv in x_vals])
+y_P2 = np.array([P2(xv) for xv in x_vals])
+y_P3 = np.array([P3(xv) for xv in x_vals])
+y_P4 = np.array([P4(xv) for xv in x_vals])
+
+# Plot
+plt.figure(figsize=(10, 6))
+plt.plot(x_vals, y_f, label='f(x) = 36√x', color='blue')
+plt.plot(x_vals, y_P1, label='P1(x)', color='orange', linestyle='--')
+plt.plot(x_vals, y_P2, label='P2(x)', color='green', linestyle='-.')
+plt.plot(x_vals, y_P3, label='P3(x)', color='red', linestyle=':')
+plt.plot(x_vals, y_P4, label='P4(x)', color='purple', linestyle='--')
+
+plt.title('Polinômios de Taylor para f(x) em torno de x = 36')
+plt.xlabel('x')
+plt.ylabel('y')
+plt.legend()
+plt.grid(True)
+plt.ylim(0, 240)
+plt.xlim(0, 72)
+plt.show()
