@@ -1,0 +1,70 @@
+import matplotlib.pyplot as plt
+import sympy as sp
+import numpy as np
+
+# Definindo o raio e o símbolo x
+raio = 36
+x = sp.Symbol('x')
+
+# Definindo a função f(x) = 36 * sqrt(x)
+fx = 36 * sp.sqrt(x)
+
+# Calculando as derivadas de f(x)
+aux1 = sp.diff(fx, x)
+aux2 = sp.diff(aux1, x)
+aux3 = sp.diff(aux2, x)
+aux4 = sp.diff(aux3, x)
+aux5 = sp.diff(aux4, x)
+
+# Convertendo as expressões simbólicas em funções lambdify
+au1 = sp.lambdify(x, aux1, 'numpy')
+au2 = sp.lambdify(x, aux2, 'numpy')
+au3 = sp.lambdify(x, aux3, 'numpy')
+au4 = sp.lambdify(x, aux4, 'numpy')
+au5 = sp.lambdify(x, aux5, 'numpy')
+
+# Calculando as derivadas no ponto raio
+df1 = au1(raio)
+df2 = au2(raio)
+df3 = au3(raio)
+df4 = au4(raio)
+df5 = au5(raio)
+
+# Fatoriais
+f1 = sp.factorial(1)
+f2 = sp.factorial(2)
+f3 = sp.factorial(3)
+f4 = sp.factorial(4)
+f5 = sp.factorial(5)
+
+# Definindo a função
+def f(x):
+    return (36 * np.sqrt(x))
+
+# Definindo P4(x)
+def P4(x):
+    return (f(raio) + ((df1/f1)*((x - raio))) + ((df2/f2)*((x - raio)**2)) + ((df3/f3)*((x - raio)**3)) + ((df4 / f4) * ((x - raio)**4)))
+
+# Definindo R4(x)
+def R4(x):
+    return abs((df5/f5) * ((x - raio)**5))
+
+# Intervalo de valores de x
+x_values = np.linspace(36, 37, 100)
+
+# Calculando f(x), P4(x) e os erros
+f_values = f(x_values)
+P4_values = P4(x_values)
+erro_exato = np.abs(f_values - P4_values)
+erro_estimado = R4(x_values)
+
+# Plot
+plt.figure(figsize=(10, 6))
+plt.plot(x_values, erro_exato, label='Erro Exato |f(x) - P4(x)|')
+plt.plot(x_values, erro_estimado, label='Erro Estimado |R4(x)|')
+plt.title('Erro exato e estimado pela desigualdade de Taylor')
+plt.xlabel('x')
+plt.ylabel('Erro')
+plt.legend()
+plt.grid(True)
+plt.show()
